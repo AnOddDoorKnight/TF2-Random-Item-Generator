@@ -37,7 +37,7 @@ class Weapon
 		this.prefix = prefix ?? (Prefix)Random.Next(Enum.GetNames(typeof(Prefix)).Length);
 
 
-		name = GenerateName(this.prefix switch
+		name = GetName(this.prefix switch
 		{
 			Prefix.Botkiller => Convert.ToString((BotKiller)Random.Next(Enum.GetNames(typeof(BotKiller)).Length)),
 			Prefix.Decorated => Convert.ToString((Grade)Random.Next(Enum.GetNames(typeof(Grade)).Length)),
@@ -62,7 +62,7 @@ class Weapon
 
 
 	}
-	static string GenerateName(string? prefix = null)
+	static string GetName(string? prefix = null)
 	{
 		string[][] weaponNames = {
 			new string[] { "Force-A-", "Pretty Boy's", "Flying", "Candy",
@@ -92,7 +92,7 @@ class Weapon
 			"Guard", "Machete", "Pain-Bringer"
 			}
 		};
-		string output = (prefix ?? "") + weaponNames[0][Random.Next(weaponNames[0].Length)];
+		string output = ($"{prefix} " ?? "") + weaponNames[0][Random.Next(weaponNames[0].Length)];
 		output += output.EndsWith('-') ? "" : " " + weaponNames[1][Random.Next(weaponNames[1].Length)];
 		return output;
 	}

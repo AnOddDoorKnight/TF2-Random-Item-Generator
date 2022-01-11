@@ -13,7 +13,7 @@ namespace CoolTF2ItemGenerator
 			foreach (string i in args) 
 				if (i.StartsWith('+'))
 				{
-					bool hasValue = Int32.TryParse(i.Replace('+', ' '), out repeat);
+					bool hasValue = int.TryParse(i.Replace('+', ' '), out repeat);
 					if (hasValue) break;
 				}
 			for(int i = 0; i < repeat; i++)
