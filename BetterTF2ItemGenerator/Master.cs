@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 //https://www.youtube.com/watch?v=jHJm9VxeO4E
 //https://wiki.teamfortress.com/wiki/Weapons
@@ -28,8 +29,7 @@ static class Master
 public class Weapon : Item
 {
     public WeaponType type;
-    public Botkiller? botkiller;
-    public Grade? grade;
+    public BotKiller? botkiller;
     public Weapon()
     {
 
@@ -38,15 +38,16 @@ public class Weapon : Item
     public override void Write()
 	{
 		ConsoleColor defaultColor = Console.ForegroundColor;
-		Console.WriteLine($"A {weaponType.ToString().ToLower()} weapon for the {@class}\n{name}");
+		Console.WriteLine($"A {type.ToString().ToLower()} weapon for the {@class}\n{name}");
 		for (int i = 0; i < 3; i++)
 		{
-			Console.ForegroundColor => i switch {
+			Console.ForegroundColor = i switch {
 				0 => ConsoleColor.Green,
 				1 => ConsoleColor.Red,
-				2 => ConsoleColor.White
+				2 => ConsoleColor.White,
+				_ => Console.ForegroundColor
 			};
-			foreach (string j in i switch { 0 => upsides, 1 => downsides, 2 => neutral })
+			foreach (string j in i switch { 0 => upsides, 1 => downsides, 2 => neutral, _ => throw new IndexOutOfRangeException() })
 				Console.WriteLine(j);
 		}
         Console.ForegroundColor = defaultColor;
@@ -56,11 +57,14 @@ public class Cosmetic : Item
 {
     public Cosmetic()
     {
-        List<Prefix> allowedPrefixes = Enum.GetNames(Prefix);
-        while (blockedPrefixes.Length != 0)
-            allowedPrefixes.Remove(allowedPrefixes.IndexOf(blockedPrefixes.Dequeue());
+		blockedPrefixes = new Prefix[] { Prefix.Botkiller, Prefix.Australium, Prefix.Festive }.ToList().;
+        List<Prefix> allowedPrefixes = new();
+		foreach (Prefix i in Enum.GetValues(typeof(Prefix)))
+			allowedPrefixes.Add(i);
+		while (blockedPrefixes.Count != 0)
+            allowedPrefixes.Remove((Prefix)allowedPrefixes.IndexOf(blockedPrefixes.Dequeue()));
     }
-    public static Queue<Prefix> blockedPrefixes = 
+	static Queue<Prefix> blockedPrefixes = new Queue<Prefix>()
         {Prefix.Botkiller, Prefix.Australium, Prefix.Festive};
     
 }
@@ -73,7 +77,8 @@ public abstract class Item
     public string name;
     public Class @class;
     public Prefix prefix;
-    public abstract void Write();
+	public Grade? grade;
+	public abstract void Write();
 }
 public enum WeaponType : byte
 { 
@@ -108,7 +113,7 @@ public enum BotKiller : byte
 	Carbonado,
 	Diamond
 }
-enum Class : byte
+public enum Class : byte
 {
 	Scout,
 	Soldier,
@@ -120,7 +125,7 @@ enum Class : byte
 	Sniper,
 	Spy
 }
-enum Grade : byte
+public enum Grade : byte
 {
 	Civilian,
 	Freelance,
