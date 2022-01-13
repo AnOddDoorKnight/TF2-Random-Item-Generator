@@ -3,9 +3,19 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
   </PropertyGroup>
+
+
+	<ItemGroup>
+		<Compile Remove="Old Code/OldCode2.cs"/>
+		<Compile Remove="Old Code/CoolTF2ItemGenerator.cs"/>
+		<Compile Remove="Old Code/BetterTF2ItemGenerator.cs"/>
+		<None Include="Old Code/OldCode2.cs"/>
+		<None Include="Old Code/CoolTF2ItemGenerator.cs"/>
+		<None Include="Old Code/BetterTF2ItemGenerator.cs"/>
+	</ItemGroup>
 	
 </Project>

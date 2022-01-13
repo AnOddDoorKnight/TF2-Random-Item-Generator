@@ -2,8 +2,8 @@ using System;
 namespace TF2ItemGenerator;
 public static class Data
 {
-    static Random Random = new();
-    public static string[][] name
+    static readonly Random Random = new();
+    public static string[][] names = 
     {
         new string[] 
         { 
@@ -216,10 +216,10 @@ public static class Data
             "Pain-Bringer"
 		}
     };
-    public string RandomName(byte index) => names[index][Random.Next(names[index].Length)];
-    public string RandomName() 
+    public static string RandomName(byte index) => names[index][Random.Next(names[index].Length)];
+    public static string RandomName() 
     {
-        
+        throw new NotImplementedException();
 		//string output = ($"{prefix} " ?? "") + weaponNames[0][Random.Next(weaponNames[0].Length)];
 		//output += output.EndsWith('-') ? "" : " " + weaponNames[1][Random.Next(weaponNames[1].Length)];
 		//return output;
