@@ -12,7 +12,10 @@ static class Master
 	}
 	static void Main(string[] args)
 	{
-		if (args.Length != 0 && args[0] == commands[0]) CommandMain(args); 
+		ReadArguments(args);
+		
+
+		if (args.Length != 0 && args[0] == commands[0][0]) CommandMain(args); 
 		else HumanInputMain();
 	}
 	static void HumanInputMain()
@@ -20,50 +23,66 @@ static class Master
 
 	}
 	static Dictionary<string, dynamic> set = new() { ["Automatic"] = false };
-	static readonly string[] commands = { "-Auto", "=Class:", "=Type: ", "=Prefix: " };
+	static readonly string[][] commands = { 
+		new string[] {"-Auto", "=Class:", "=Type: ", "=Prefix: ", }, 
+		new string[] {"Automatic", "Preset Class", "Preset Item", "Preset Prefix", } };
 	static void CommandMain(string[] args)
 	{
-		if (commands[0] == args[0]) ReadArguments(args);
+		if (commands[0][0] == args[0]) ReadArguments(args);
 		else return;
+
 	}
 	static void ReadArguments(string[] args)
 	{
 		HashSet<string> argsHashSet = Enumerable.ToHashSet(args);
 		foreach (string i in args) argsHashSet.Add(i);
-		for (int i = 0; i < commands.Length; i++)
+		for (int i = 0; i < commands[0].Length; i++)
 		{
-			if (argsHashSet.Contains(commands[i]))
+			if (argsHashSet.Contains(commands[0][i]))
 				switch (i)
 				{
-					case 0:
-						set["Automatic"] = true;
-						continue;
-					case 1:
-						set.Add("Preset Class", Enum.Parse<Class>(args[Array.IndexOf(args, commands[i]) + 1]));
-						continue;
-					case 2:
-						set.Add("Preset Item", args[Array.IndexOf(args, commands[i]) + 1].ToLower() switch { "weapon" => "Weapon", "cosmetic" => "Cosmetic", _ => throw new ArgumentException("Invalid Item, did you misspell it?")});
-						continue;
-					case 3:
-						set.Add("Preset Prefix", Enum.Parse<Prefix>(args[Array.IndexOf(args, commands[i]) + 1]));
-						continue;
+					case 0: set[commands[1][i]] = true; continue;
+					case 1: set.Add(commands[1][i], Enum.Parse<Class>(args[Array.IndexOf(args, commands[0][i]) + 1])); continue;
+					case 2: set.Add(commands[1][i], args[Array.IndexOf(args, commands[0][i]) + 1].ToLower() switch { "weapon" => "Weapon", "cosmetic" => "Cosmetic", _ => throw new ArgumentException("Invalid Item, did you misspell it?")}); continue;
+					case 3: set.Add(commands[1][i], Enum.Parse<Prefix>(args[Array.IndexOf(args, commands[0][i]) + 1])); continue;
 				}
 		}
+	}
+	static T WriteArguments<T>() where T : Weapon, Cosmetic// Assumes that auto is set to true
+	{
+		if (T is Item item)
+		{
+			for (int i = 1; i < set.Count; i++)
+			{
+				if (set.ContainsKey(commands[1][i]))
+				{
+					switch(set[commands[1][i]].GetType())
+					{
+						case Class: item.@class = set[commands[1][i]]; break;
+						case string: item. break;
+						case Prefix: break;
+						default: throw new ArgumentOutOfRangeException();
+					} 
+				}	
+			}
+			return item;
+		}
+		throw new ArgumentException();
 	}
 }
 public class Weapon : Item
 {
 	public WeaponType type;
 	public BotKiller? botkiller;
-	public Weapon()
+	public Weapon() : base(null)
 	{
-		base.prefix = (Prefix)Random.Next(Enum.GetValues<Prefix>().Length - 1);
+		
 	}
 	public List<string> upsides, downsides, neutral;
 	public override void Write()
 	{
 		ConsoleColor defaultColor = Console.ForegroundColor;
-		Console.WriteLine($"A {type.ToString().ToLower()} weapon for the {@class}\n{name}");
+		Console.WriteLine($"A {type.ToString().ToLower()} weapon for {$"the {@class}" ?? "all classes"}\n{name}");
 		for (int i = 0; i < 3; i++)
 		{
 			Console.ForegroundColor = i switch {
@@ -81,12 +100,18 @@ public class Weapon : Item
 public class Cosmetic : Item
 {
 	public CosmeticType type;
-	public new Class? @class;
-	public Cosmetic()
+	public Cosmetic() : base(new Prefix[] {Prefix.Botkiller, Prefix.Australium, Prefix.Festive})
 	{
-		List<Prefix> allowedPrefixes = GetAllowedPrefixes(new Prefix[] {Prefix.Botkiller, Prefix.Australium, Prefix.Festive});
-		base.prefix = (Prefix)Random.Next(allowedPrefixes.Count - 1);
 
+	}
+	public override void Write() => Console.WriteLine($"A {type.ToString().ToLower()} cosmetic for {$"the {@class}" ?? "all classes"}\n{name}");
+}
+public abstract class Item
+{
+	public Item(Prefix[]? disallowedPrefixes)
+	{
+		List<Prefix> allowedPrefixes = GetAllowedPrefixes(disallowedPrefixes);
+		prefix = (Prefix)Random.Next(allowedPrefixes - 1);
 	}
 	static List<T> GetAllowedPrefixes<T>(T[] blockedEnumerations) where T : Enum
 	{
@@ -94,21 +119,13 @@ public class Cosmetic : Item
 		foreach (T i in blockedEnumerations)
 			blockedQueue.Enqueue(i);
 		List<T> allowedEnumerations = new();
-		foreach (T i in Enum.GetValues(typeof(T)))
+		foreach (T i in Enum.GetNames(typeof(T)))
 			allowedEnumerations.Add(i);
 		allowedEnumerations.Remove(blockedQueue.Dequeue());
 		return allowedEnumerations;
 	}
-	public override void Write() => Console.WriteLine($"A {type.ToString().ToLower()} cosmetic for {$"the {@class}" ?? "all classes"}\n{name}");
-}
-public abstract class Item
-{
-	public Item()
-	{
-
-	}
 	public string name;
-	public Class @class;
+	public Class? @class;
 	public Prefix prefix;
 	public Grade? grade;
 	public static readonly Random Random = new();

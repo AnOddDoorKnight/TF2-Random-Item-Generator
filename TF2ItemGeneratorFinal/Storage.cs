@@ -217,6 +217,7 @@ public static class Data
 		}
     };
     public static string RandomName(byte index) => names[index][Random.Next(names[index].Length)];
+    #warning Not Implemented!
     public static string RandomName() 
     {
         throw new NotImplementedException();
