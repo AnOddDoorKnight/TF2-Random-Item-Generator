@@ -48,27 +48,44 @@ static class Master
 				}
 		}
 	}
-	static T WriteArguments<T>() where T : Weapon, Cosmetic// Assumes that auto is set to true
+	static Weapon WriteArguments(Weapon? weapon = null)
 	{
-		if (T is Item item)
-		{
-			for (int i = 1; i < set.Count; i++)
-			{
-				if (set.ContainsKey(commands[1][i]))
-				{
-					switch(set[commands[1][i]].GetType())
-					{
-						case Class: item.@class = set[commands[1][i]]; break;
-						case string: item. break;
-						case Prefix: break;
-						default: throw new ArgumentOutOfRangeException();
-					} 
-				}	
-			}
-			return item;
-		}
-		throw new ArgumentException();
+		weapon ??= new Weapon();
+		
+
+		return weapon;
 	}
+	static Cosmetic WriteArguments(Cosmetic? cosmetic = null)
+	{
+		cosmetic ??= new Cosmetic();
+		cosmetic = (Cosmetic)Foo(cosmetic);
+
+		return cosmetic;
+	}
+	private static Item Foo(Item item)
+	{
+
+
+		return item;
+	}
+	/*
+	static T WriteArguments<T>() where T : Item // Assumes that auto is set to true
+	{
+		for (int i = 1; i < set.Count; i++)
+		{
+			if (set.ContainsKey(commands[1][i]))
+			{
+				switch (set[commands[1][i]].GetType())
+				{
+					case Class: item.@class = set[commands[1][i]]; break;
+					case string: item. break;
+					case Prefix: break;
+					default: throw new ArgumentOutOfRangeException();
+				}
+			}
+		}
+	}
+	*/
 }
 public class Weapon : Item
 {
@@ -110,8 +127,8 @@ public abstract class Item
 {
 	public Item(Prefix[]? disallowedPrefixes)
 	{
-		List<Prefix> allowedPrefixes = GetAllowedPrefixes(disallowedPrefixes);
-		prefix = (Prefix)Random.Next(allowedPrefixes - 1);
+		if (disallowedPrefixes != null)
+			prefix = (Prefix)Random.Next(GetAllowedPrefixes(disallowedPrefixes).Count - 1);
 	}
 	static List<T> GetAllowedPrefixes<T>(T[] blockedEnumerations) where T : Enum
 	{
@@ -119,7 +136,7 @@ public abstract class Item
 		foreach (T i in blockedEnumerations)
 			blockedQueue.Enqueue(i);
 		List<T> allowedEnumerations = new();
-		foreach (T i in Enum.GetNames(typeof(T)))
+		foreach (T i in Enum.GetValues(typeof(T)))
 			allowedEnumerations.Add(i);
 		allowedEnumerations.Remove(blockedQueue.Dequeue());
 		return allowedEnumerations;
