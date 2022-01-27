@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 namespace TF2ItemGenerator;
 public class Weapon : Item
 {
@@ -6,13 +7,13 @@ public class Weapon : Item
 	public Weapon() : base(null)
 	{
 		ushort amountEach = (ushort)Random.Next(6);
-        for (; amountEach != 0; amountEach--)
-            switch (Random.Next(3))
-            {
-                case 0: upsides.Add(new Modifier());
-                case 1: downsides.Add(new Modifier());
-                case 2: neutral.Add(new Modifier());
-            }
+		for (; amountEach != 0; amountEach--)
+			switch (Random.Next(3))
+			{
+				case 0: upsides.Add(new Modifier());
+				case 1: downsides.Add(new Modifier());
+				case 2: neutral.Add(new Modifier());
+			}
 	}
 	public List<Modifier> upsides = new(), downsides = new(), neutral = new();
 	public override void Write()
@@ -67,68 +68,69 @@ public abstract class Item
 	public static readonly Random Random = new();
 	public abstract void Write();
 }
-public struct Modifier
+public class Modifier
 {
-    readonly char? @char;
-    string value;
-    public Modifier()
-    {
-        string index = Random.Next(4) switch {0 => "Pros", 1 => "Cons", 2 => "Neutral", 3 => "Customizable" };
-        value = staticModifierData[index][Random.Next(staticModifierData[index].Length)];
-        if (value.StartsWith("{0}")) @char = index == "Customizable" ? Random.Next(2) switch {0 => '+', _ => '-'} 
-            : index switch {"Pros" => '+', "Cons" => '-', _ => ' '};
-        value = @char.ToString() ?? "" + ApplyValues(value);
-    }
-    public Modifier(bool? isPositive)
-    {
-        switch (isPositive)
-        {
-            case true:
-                
-                break;
-            case false:
-            case null:
-        }
-    }
-    public override string ToString() => value;
-    static Random Random = new();
-    static string ApplyValues(string input)
-    {
-        foreach (string i in new string[] { "{0}", "{1}", "{2}", "{3}"})
-            if (input.Contains(i)) 
-                input.Replace(i, i switch 
-                {   "{0}" => Random.Next(5, 101), 
-                    "{1}" => Random.Next(1, 6), 
-                    "{2]" => Random.Next(4) switch 
-                    {   0 => "Bullet",
-                        1 => "Explosive",
-                        2 => "Fire",
-                        3 => "Melee"
-                    }
-                    "{3}" => Random.Next(2) switch
-                    {   0 => "resistance"
-                        1 => "vulnerability"
-                    }
-                }.ToString());
-        return input;
-    }
-    public static dictionary<string, string[]> staticModifierData = new()
-    {   // Some of these are different, which requires dif values
-        ["Pros"] = new string[] {
-            "Regenerate {1} health points per second",
-        },
-        ["Cons"] = new string[] {
-            "No random crits",
-        },
-        ["Neutral"] = new string[] {
+	readonly char? @char;
+	string value;
+	public Modifier()
+	{
+		string index = Random.Next(4) switch {0 => "Pros", 1 => "Cons", 2 => "Neutral", 3 => "Customizable", _ => throw new InvalidOperationException()};
+		value = staticModifierData[index][Random.Next(staticModifierData[index].Length)];
+		if (value.StartsWith("{0}")) @char = index == "Customizable" ? Random.Next(2) switch {0 => '+', _ => '-'} 
+			: index switch {"Pros" => '+', "Cons" => '-', _ => ' '};
+		value = @char.ToString() ?? "" + ApplyValues(value);
+	}
+	public Modifier(bool? isPositive)
+	{
+		switch (isPositive)
+		{
+			case true:
+				
+				break;
+			case false:
+			case null:
+		}
+	}
+	public override string ToString() => value;
+	static Random Random = new();
+	static string ApplyValues(string input)
+	{
+		foreach (string i in new string[] { "{0}", "{1}", "{2}", "{3}" })
+			if (input.Contains(i))
+				input = input.Replace(i, i switch
+				{   "{0}" => Random.Next(5, 101).ToString(),
+					"{1}" => Random.Next(1, 6).ToString(),
+					"{2]" => Random.Next(4) switch
+					{   0 => "Bullet",
+						1 => "Explosive",
+						2 => "Fire",
+						_ => "Melee"
+					},
+					"{3}" => Random.Next(2) switch
+					{   0 => "resistance",
+						_ => "vulnerability"
+					},
+					_ => throw new InvalidOperationException()
+				} as string); ;
+		return input;
+	}
+	public static dictionary<string, string[]> staticModifierData = new()
+	{   // Some of these are different, which requires dif values
+		["Pros"] = new string[] {
+			"Regenerate {1} health points per second",
+		},
+		["Cons"] = new string[] {
+			"No random crits",
+		},
+		["Neutral"] = new string[] {
 
-        }
-        ["Customizable"] = new string[] {
-            "{0}% self-inflicted damage {3} while deployed",
-            "{0} max health",
-            "{0}% damage to buildings on wearer",
-            "{0}% {2} damage {3} while deployed", // 2 = explosive, phys, etc. 3 = resistance and vulnerability
-            "{0}% movement speed while deployed", 
-        }
-    };
+		},
+		["Customizable"] = new string[] {
+			"{0}% self-inflicted damage {3} while deployed",
+			"{0} max health",
+			"{0}% damage to buildings on wearer",
+			"{0}% {2} damage {3} while deployed", // 2 = explosive, phys, etc. 3 = resistance and vulnerability
+			"{0}% movement speed while deployed", 
+		}
+	};
 }
