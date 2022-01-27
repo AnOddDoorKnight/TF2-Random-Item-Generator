@@ -6,13 +6,13 @@ global using System.Collections.Generic;
 namespace TF2ItemGenerator;
 static class Master
 {
-	dynamic item;
+	static dynamic item;
 	static void Main(string[] args)
 	{
 		ArgumentHandler.Read(args);
 		
 
-		if (args.Length != 0 && args[0] == commands[0][0]) CommandMain(args); 
+		if (args.Length != 0 && args[0] == ArgumentHandler.commands[0][0]) CommandMain(args); 
 		else HumanInputMain();
 	}
 	static void CommandMain(string[] args)
@@ -22,7 +22,7 @@ static class Master
 	static void HumanInputMain()
 	{
 		Console.WriteLine("Do you want to define your weapon or a complete random one?\ntrue/false");
-		if (Console.ReadLine().ToLower() == "true")
+		if ((Console.ReadLine() ?? "false").ToLower() == "true")
 		{
 			for (int i = 0; i > ArgumentHandler.set.Count; i++)
 		}
