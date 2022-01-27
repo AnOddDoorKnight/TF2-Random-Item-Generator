@@ -11,24 +11,64 @@ static class Master
 	{
 		ArgumentHandler.Read(args);
 		
-
-		if (args.Length != 0 && args[0] == ArgumentHandler.commands[0][0]) CommandMain(args); 
-		else HumanInputMain();
+		CommandMain(args);
+		HumanInputMain();
+		Console.WriteLine(item);
 	}
-	static void CommandMain(string[] args)
+	static void ReadArguments(string[] args)
 	{
 		
 	}
-	static void HumanInputMain()
+	static void AllowHumanSetArgs()
 	{
-		Console.WriteLine("Do you want to define your weapon or a complete random one?\ntrue/false");
-		if ((Console.ReadLine() ?? "false").ToLower() == "true")
+		Console.WriteLine("Do you want to set anything?\n[Y]es/[N]o");
+		if (Console.ReadLine().ToLower()[0].Equals('y')) { Set["Automatic"] = true; return; }
+		if (!Set.ContainsKey(commands[1][2]))
+		{	// Preset Item
+			Console.WriteLine("Do you want to define your weapon or a complete random one?\n[T]rue/[F]alse");
+			if (Console.ReadLine().ToLower()[0].Equals('t'))
+			{
+				Console.WriteLine("[W]eapon or [C]osmetic?");
+				Set.Add(commands[1][2], Enum.Parse<ItemType>(Console.ReadLine()[0].ToUpper()));
+			}
+		}
+		if (!Set.ContainsKey(commands[1][1]))
+		{	// Preset Class
+			Console.WriteLine("Choose your Class, or type [R]andom for Random");
+			foreach (Class i in typeof(Class))
+				Console.WriteLine($"{i.GetHashCode()}. {i.ToString()}");
+			string foo = Console.ReadLine() ?? "";
+			Class? bar = Enum.TryParse<Class>(foo, out Class ass) ? ass : null;
+			Set.Add(commands[1][1], bar); 
+		}
+		for (int i = 0, j = i == 0 ? 3 : 1; i < 2; i++)
 		{
-			for (int i = 0; i > ArgumentHandler.set.Count; i++)
+			if (Set.ContainsKey(commands[1][j])) continue;
+			Console.WriteLine($"Choose your {j == 3 ? "Prefix" : "Class"}, or type [R]andom for Random");
+			foreach (var ii in typeof(j == 3 ? Prefix : Class))
+
+		}
+		if (!Set.ContainsKey(commands[1][3]))
+		{	// Preset Prefix
+			// Should also include grades n stuff
+			//case 3: set.Add(commands[1][i], Enum.Parse<Prefix>(args[Array.IndexOf(args, commands[0][i]) + 1])); continue;
+			Console.WriteLine("Choose your Prefix, or type [R]andom for Random");
+
+
 		}
 	}
+	public static Dictionary<string, dynamic> Set = new() { ["Automatic"] = false };
+	public static readonly string[][] commands = { 
+		new string[] {"-Auto", "=Class:", "=Type: ", "=Prefix: ", "=Name: " }, 
+		new string[] {"Automatic", "Preset Class", "Preset Item", "Preset Prefix", "Preset Name"} };
+	
+	static dynamic MakeItem(bool? isWeapon) => isWeapon == true ? new Weapon() : isWeapon == false ? new Cosmetic() : new Random().NextDouble() > 0.5f ? new Weapon() : new Cosmetic();
 }
-
+public enum ItemType : byte
+{
+	Weapon,
+	Cosmetic,
+}
 public enum CosmeticType : byte
 {
 	Hat,
@@ -87,10 +127,3 @@ public enum Grade : byte
 	Assassin,
 	Elite
 }
-//	<ItemGroup>
-//		<Compile Remove="OldCode.cs" />
-//	</ItemGroup>
-//
-//	<ItemGroup>
-//		<None Include="OldCode.cs" />
-//	</ItemGroup>
