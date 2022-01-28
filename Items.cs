@@ -28,7 +28,7 @@ public class Weapon : Item
 				2 => ConsoleColor.White,
 				_ => Console.ForegroundColor
 			};
-			foreach (string j in i switch { 0 => upsides, 1 => downsides, 2 => neutral, _ => throw new IndexOutOfRangeException() })
+			foreach (Modifier j in i switch { 0 => upsides, 1 => downsides, 2 => neutral, _ => throw new IndexOutOfRangeException() })
 				Console.WriteLine(j);
 		}
 		Console.ForegroundColor = defaultColor;
@@ -114,7 +114,7 @@ public class Modifier
 				} as string); ;
 		return input;
 	}
-	public static dictionary<string, string[]> staticModifierData = new()
+	public static Dictionary<string, string[]> staticModifierData = new()
 	{   // Some of these are different, which requires dif values
 		["Pros"] = new string[] {
 			"Regenerate {1} health points per second",

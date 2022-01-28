@@ -10,17 +10,15 @@ static class Master
 	public static readonly string[][] commands = {
 		new string[] {"-Auto", "=Class:", "=Type: ", "=Prefix: ", "=Name: " },
 		new string[] {"Automatic", "Preset Class", "Preset Item", "Preset Prefix", "Preset Name"} };
-	static dynamic item;
 	static void Main(string[] args)
 	{
 		ReadArguments(args);
-		if (Set["Automatic"]) CommandMain();
-		else AllowHumanSetArgs();
-		Console.WriteLine(item);
 	}
 	static void ReadArguments(string[] args)
 	{
-		
+
+
+		if (Set["Automatic"] && Set.Count != commands[0].Length) AllowHumanSetArgs();
 	}
 	static void AllowHumanSetArgs()
 	{
