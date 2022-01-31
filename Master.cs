@@ -37,7 +37,7 @@ static class Master
 		{	// Preset Class
 			Console.WriteLine("Choose your Class, or type [R]andom for Random");
 			foreach (Class i in Enum.GetValues<Class>())
-				Console.WriteLine($"{i.GetHashCode()}. {i.ToString()}");
+				Console.WriteLine($"{i.GetHashCode()}. {i}");
 			string foo = Console.ReadLine() ?? "";
 			Class? bar = Enum.TryParse<Class>(foo, out Class ass) ? ass : null;
 			Set.Add(commands[1][1], bar); 
