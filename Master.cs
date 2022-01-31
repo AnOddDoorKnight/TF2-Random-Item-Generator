@@ -44,10 +44,14 @@ static class Master
 		}
 		for (int i = 0, j = i == 0 ? 3 : 1; i < 2; i++)
 		{
-			if (Set.ContainsKey(commands[1][j])) continue;
-			Console.WriteLine($"Choose your {(j == 3 ? "Prefix" : "Class")}, or type [R]andom for Random");
-			// foreach (var ii in typeof(j == 3 ? Prefix : Class)) ;
-	}
+			if (Set.ContainsKey(commands[1][j])) continue; // 3 = Prefix, 1 = Class
+			bool isPrefix = j == 3;
+			Console.WriteLine($"Choose your {(isPrefix ? "Prefix" : "Class")}, or type [R]andom for Random");
+			Type enumType = isPrefix ? typeof(Class) : typeof(Prefix);
+			for (int ii = 0; ii < Enum.GetNames(enumType).Length; i++) Console.WriteLine($"{ii}. {Enum.GetName(enumType, ii)}");
+			// Code here about allowing people to input on what they want.
+			
+		}
 		if (!Set.ContainsKey(commands[1][3]))
 		{	// Preset Prefix
 			// Should also include grades n stuff
