@@ -13,6 +13,7 @@ static class Master
 	static void Main(string[] args)
 	{
 		ReadArguments(args);
+		dynamic item = Set.ContainsKey("Preset Item") ? Set["Preset Item"]! : new Random().Next(2) == 0 ? Item.GetWeapon() : Item.GetCosmetic();
 	}
 	static void ReadArguments(string[] args)
 	{
@@ -61,10 +62,6 @@ static class Master
 
 		}
 	}
-	
-	
-	
-	static dynamic MakeItem(bool? isWeapon) => isWeapon == true ? new Weapon() : isWeapon == false ? new Cosmetic() : new Random().NextDouble() > 0.5f ? new Weapon() : new Cosmetic();
 }
 public enum ItemType : byte
 {
