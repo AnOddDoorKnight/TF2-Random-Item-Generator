@@ -1,19 +1,37 @@
-using System;
 namespace TF2ItemGenerator;
+
+using System;
+using System.IO;
+using System.Xml;
+using System.Collections.Generic;
+
+internal static class Name
+{
+    public static readonly string[] nameCategories = { "prefix", "suffix" };
+
+    private static XmlDocument? doc = null;
+    private static XmlDocument Initialize()
+    {
+        XmlDocument doc = new();
+        doc.Load(File.GetCurrentDirectory());
+        return doc;
+    }
+    public static string GetRandomName()
+    {
+        doc ??= Initialize();
+    }
+
+
+}
+
+
 public static class Data
 {
-    static readonly Random Random = new();
-    public static string[][] names = 
+    public static readonly string[] indexToString = { "prefix", "suffix" };
+    public static readonly Dictionary<string, string[]> names = new()
     {
-        new string[] 
-        { 
-            "Force-A-", 
-            "Pretty Boy's", 
-            "Flying", 
-            "Candy",
-			"Boston", 
-            "Battalion's Backup", 
-            "Pain-Bringing",
+        ["prefix"] = new string[]
+        {
             "Holy", 
             "Beggar's", 
             "Black", 
@@ -120,17 +138,9 @@ public static class Data
             "Crossing", 
             "Prinny",
 			"Mad"
-		},
-		new string[] 
-        { 
-            "Scatter", 
-            "Blaster", 
-            "Pooper", 
-            "Popper", 
-            "Nature", 
-            "Gun", 
-            "Pocket Pistol",
-            "Punch", 
+        },
+        ["suffix"] = new string[]
+        {
             "Guillotine", 
             "Cola", 
             "Milk", 
@@ -214,15 +224,10 @@ public static class Data
 		    "Guard", 
             "Machete", 
             "Pain-Bringer"
-		}
+        }
     };
-    public static string RandomName(byte index) => names[index][Random.Next(names[index].Length)];
-    #warning Not Implemented!
-    public static string RandomName() 
-    {
-        throw new NotImplementedException();
-		//string output = ($"{prefix} " ?? "") + weaponNames[0][Random.Next(weaponNames[0].Length)];
-		//output += output.EndsWith('-') ? "" : " " + weaponNames[1][Random.Next(weaponNames[1].Length)];
-		//return output;
-    }
+
+    private static readonly Random random = new();
+    public static string RandomName()
+        => names["suffix"][random.Next(names["suffix"].Length)]
 }
